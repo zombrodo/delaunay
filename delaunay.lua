@@ -148,8 +148,10 @@ local function checkLineIntersection(a1, a2, b1, b2, includeEnds)
   return false
 end
 
-local function clampList(index, size)
-  return ((index % size) + size) % size
+local function wrapIndex(index, size)
+  local result = ((index - 1) % size) + 1
+  print(index, size, result)
+  return result
 end
 
 local function printPosition(position)
@@ -722,7 +724,7 @@ end
 
 local function isConstraint(a, b, constraints)
   for i, constraint in ipairs(constraints) do
-    local other = constraints[clampList(i + 1, #constraints) + 1]
+    local other = constraints[wrapIndex(i + 1, #constraints)]
     if (equals(a, constraint.position) and equals(b, other.position))
         or (equals(b, constraint.position) and equals(a, other.position)) then
       return true
@@ -864,7 +866,7 @@ end
 
 local function addConstraints(triangulation, constraints)
   for i, constraint in ipairs(constraints) do
-    local other = constraints[clampList(i + 1, #constraints) + 1]
+    local other = constraints[wrapIndex(i + 1, #constraints)]
     if not isEdgeInTriangulation(triangulation, constraint, other) then
       local intersectingEdges = findIntersectingEdges(
         triangulation, constraint, other
