@@ -5,6 +5,7 @@ local Delaunay = require "delaunay"
 local points = {}
 local constraints = {}
 local triangles = nil
+local hull = nil
 
 
 function love.load()
@@ -34,6 +35,13 @@ function love.draw()
     love.graphics.pop()
   end
 
+  if hull then
+    love.graphics.push("all")
+    love.graphics.setColor(1, 0, 0, 1)
+    love.graphics.polygon("line", hull)
+    love.graphics.pop()
+  end
+
   if triangles then
     for i, triangle in ipairs(triangles) do
       love.graphics.push("all")
@@ -49,6 +57,17 @@ function love.draw()
 end
 
 function love.keypressed(key)
+  if key == "h" then
+    triangles = nil
+    local convexHull = Delaunay.convexHull(points)
+    local result = {}
+    for i, p in ipairs(convexHull) do
+      table.insert(result, p.position[1])
+      table.insert(result, p.position[2])
+    end
+    hull = result
+  end
+
   if key == "d" then
     triangles = Delaunay.triangulate(points)
   end
@@ -59,8 +78,6 @@ function love.keypressed(key)
 
   if key == "c" then
     triangles = Delaunay.constrainedTriangulation(points, constraints)
-
-    print(#triangles)
   end
 
   if key == "r" then

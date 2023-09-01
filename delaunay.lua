@@ -150,13 +150,9 @@ end
 
 local function wrapIndex(index, size)
   local result = ((index - 1) % size) + 1
-  print(index, size, result)
   return result
 end
 
-local function printPosition(position)
-  return "(" .. position[1] .. ", " .. position[2] .. ")"
-end
 -- =============================================================================
 -- Convex Hull
 -- =============================================================================
@@ -187,6 +183,7 @@ local function findConvexHull(points)
     while #hull >= limit and cross(hull[#hull - 1], hull[#hull], point) <= 0 do
       table.remove(hull)
     end
+
     table.insert(hull, point)
   end
 
